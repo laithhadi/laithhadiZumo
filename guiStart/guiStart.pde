@@ -3,7 +3,7 @@ import g4p_controls.*;
 
 int bgcol = 15;
 Serial myPort;
-int val;
+String val;
 
 public void setup() {
   size(500, 360);
@@ -14,5 +14,6 @@ public void setup() {
 
 public void draw() {
   background(200, 200, 200);
+  fill(227, 230, 255);
 
 }

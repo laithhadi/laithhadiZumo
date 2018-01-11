@@ -14,20 +14,8 @@
  * =========================================================
  */
 
-public void textarea1_change1(GTextArea source, GEvent event) { //_CODE_:textarea1:653858:
-  println("textarea1 - GTextArea >> GEvent." + event + " @ " + millis());
-} //_CODE_:textarea1:653858:
-
-public void sendBtnClick(GButton source, GEvent event) { //_CODE_:sendBtn:500642:
-  println("button1 - GButton >> GEvent." + event + " @ " + millis());
-} //_CODE_:sendBtn:500642:
-
-public void textfield1_change1(GTextField source, GEvent event) { //_CODE_:textfield1:568846:
-  println("textfield1 - GTextField >> GEvent." + event + " @ " + millis());
-} //_CODE_:textfield1:568846:
-
 public void leftClick(GButton source, GEvent event) { //_CODE_:leftBtn:308221:
-  myPort.write('a');
+  myPort.write('l');
 } //_CODE_:leftBtn:308221:
 
 public void rightClick(GButton source, GEvent event) { //_CODE_:rightBtn:604378:
@@ -46,6 +34,27 @@ public void stopClick(GButton source, GEvent event) { //_CODE_:stopBtn:713639:
   myPort.write('x');
 } //_CODE_:stopBtn:713639:
 
+public void showTextAction(GTextField source, GEvent event) { //_CODE_:showText:502236:
+   while (myPort.available() > 0) {
+    val = myPort.readStringUntil('!');
+ }
+ if(val != null) {
+   showText.setText(val);
+ }
+} //_CODE_:showText:502236:
+
+public void autoAction(GButton source, GEvent event) { //_CODE_:autoBtn:225239:
+  myPort.write('p');
+} //_CODE_:autoBtn:225239:
+
+public void completeAction(GButton source, GEvent event) { //_CODE_:completeBtn:927881:
+  myPort.write('c');
+} //_CODE_:completeBtn:927881:
+
+public void showCommandsAction(GTextField source, GEvent event) { //_CODE_:showCommands:358095:
+  println("showCommands - GTextField >> GEvent." + event + " @ " + millis());
+} //_CODE_:showCommands:358095:
+
 
 
 // Create all the GUI controls. 
@@ -55,51 +64,62 @@ public void createGUI(){
   G4P.setGlobalColorScheme(GCScheme.BLUE_SCHEME);
   G4P.setCursor(ARROW);
   surface.setTitle("Sketch Window");
-  textarea1 = new GTextArea(this, 237, 11, 198, 199, G4P.SCROLLBARS_BOTH | G4P.SCROLLBARS_AUTOHIDE);
-  textarea1.setText("Messages from Zumo");
-  textarea1.setLocalColorScheme(GCScheme.PURPLE_SCHEME);
-  textarea1.setOpaque(true);
-  textarea1.addEventHandler(this, "textarea1_change1");
-  sendBtn = new GButton(this, 20, 280, 91, 60);
-  sendBtn.setTextAlign(GAlign.LEFT, GAlign.TOP);
-  sendBtn.setText("Send message to Zumo");
-  sendBtn.setTextBold();
-  sendBtn.setLocalColorScheme(GCScheme.PURPLE_SCHEME);
-  sendBtn.addEventHandler(this, "sendBtnClick");
-  textfield1 = new GTextField(this, 110, 300, 160, 30, G4P.SCROLLBARS_NONE);
-  textfield1.setText("Messages To Zumo");
-  textfield1.setLocalColorScheme(GCScheme.PURPLE_SCHEME);
-  textfield1.setOpaque(true);
-  textfield1.addEventHandler(this, "textfield1_change1");
-  leftBtn = new GButton(this, 20, 80, 80, 30);
+  leftBtn = new GButton(this, 219, 83, 80, 30);
   leftBtn.setText("Left");
   leftBtn.setTextBold();
   leftBtn.addEventHandler(this, "leftClick");
-  rightBtn = new GButton(this, 140, 80, 80, 31);
+  rightBtn = new GButton(this, 396, 83, 80, 31);
   rightBtn.setText("Right");
   rightBtn.setTextBold();
   rightBtn.addEventHandler(this, "rightClick");
-  forwardBtn = new GButton(this, 80, 40, 80, 30);
+  forwardBtn = new GButton(this, 306, 37, 80, 30);
   forwardBtn.setText("Forward");
   forwardBtn.setTextBold();
   forwardBtn.addEventHandler(this, "forwardClick");
-  backBtn = new GButton(this, 80, 120, 80, 30);
+  backBtn = new GButton(this, 307, 124, 80, 30);
   backBtn.setText("Back");
   backBtn.setTextBold();
   backBtn.addEventHandler(this, "backClick");
-  stopBtn = new GButton(this, 80, 170, 80, 30);
+  stopBtn = new GButton(this, 307, 83, 80, 30);
   stopBtn.setText("Stop");
   stopBtn.setTextBold();
   stopBtn.addEventHandler(this, "stopClick");
+  showText = new GTextField(this, 14, 171, 265, 30, G4P.SCROLLBARS_NONE);
+  showText.setLocalColorScheme(GCScheme.GREEN_SCHEME);
+  showText.setOpaque(true);
+  showText.addEventHandler(this, "showTextAction");
+  label1 = new GLabel(this, 16, 147, 150, 20);
+  label1.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
+  label1.setText("Messages from Zumo:");
+  label1.setLocalColorScheme(GCScheme.RED_SCHEME);
+  label1.setOpaque(false);
+  autoBtn = new GButton(this, 54, 25, 80, 30);
+  autoBtn.setText("Auto Pilot");
+  autoBtn.setTextBold();
+  autoBtn.addEventHandler(this, "autoAction");
+  completeBtn = new GButton(this, 55, 62, 80, 30);
+  completeBtn.setText("Complete");
+  completeBtn.setTextBold();
+  completeBtn.addEventHandler(this, "completeAction");
+  label2 = new GLabel(this, 15, 207, 153, 20);
+  label2.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
+  label2.setText("Commands sent to Zumo:");
+  label2.setOpaque(false);
+  showCommands = new GTextField(this, 16, 233, 160, 30, G4P.SCROLLBARS_NONE);
+  showCommands.setOpaque(true);
+  showCommands.addEventHandler(this, "showCommandsAction");
 }
 
 // Variable declarations 
 // autogenerated do not edit
-GTextArea textarea1; 
-GButton sendBtn; 
-GTextField textfield1; 
 GButton leftBtn; 
 GButton rightBtn; 
 GButton forwardBtn; 
 GButton backBtn; 
 GButton stopBtn; 
+GTextField showText; 
+GLabel label1; 
+GButton autoBtn; 
+GButton completeBtn; 
+GLabel label2; 
+GTextField showCommands; 
