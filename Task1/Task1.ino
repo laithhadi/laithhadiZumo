@@ -13,21 +13,23 @@
 #define NUM_SENSORS 6
 #define REVERSE_SPEED     150
 #define TURN_SPEED        150
-#define FORWARD_SPEED     100
+#define FORWARD_SPEED     130
 #define REVERSE_DURATION  150 // ms
 #define TURN_DURATION     150 // ms
-#define MAX_DISTANCE      200 // Maximum distance we want to ping for (in centimeters)
+#define MAX_DISTANCE      30  // Maximum distance we want to ping for (in centimeters)
 #define TRIGGER_PIN        2  // Arduino pin tied to trigger pin on the ultrasonic sensor.
 #define ECHO_PIN           6  // Arduino pin tied to echo pin on the ultrasonic sensor.
 ZumoMotors motors;
-NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 ZumoReflectanceSensorArray sensors;
 ZumoBuzzer buzzer;
+NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 int calibratedValue[6];
+int rooms[10];
+int corridorCounter = 1;
 unsigned int sensorValues[NUM_SENSORS]; //declare number of sensors on the zumo
 bool start = false;
 bool roomScan = false;
-char input;
+char input, previousInput;
 /*------------------------------------------------------------------------
   Setup function
   -------------------------------------------------------------------------*/
@@ -50,6 +52,7 @@ void setup()
     calibratedValue[i] = sensors.calibratedMaximumOn[i];
   }
   Serial.print("Calibration completed!");
+  Serial.print("Zumo is at corridor number 1!");
 }
 /*------------------------------------------------------------------------
   Loop function
@@ -96,25 +99,13 @@ void calibrateZumo()
 //recieve input from GUI
 void receiveInput()
 {
-  while (Serial.available() > 0)
+  while (Serial.available() > 0 && previousInput != 'c')
   {
     start = true;
     input = (char) Serial.read();
     if (input == 'x')
     {
       motors.setSpeeds(0, 0);
-    }
-    else if (input == 'c')
-    {
-      if (roomScan)
-      {
-        scanRoom();        
-      }
-      else
-      {
-      motors.setSpeeds(FORWARD_SPEED, FORWARD_SPEED);
-      Serial.print("Resuming automatic zumo control!")
-      }
     }
     else if (input == 'p')
     {
@@ -124,7 +115,7 @@ void receiveInput()
     {
       motors.setSpeeds(0, 0);
       Serial.print("Please show me the direction of the room!");
-      char input = (char) Serial.read();
+      input = (char) Serial.read();
       while (!(input == 'l' || input == 'r'))
       {
         input = (char) Serial.read();
@@ -132,101 +123,191 @@ void receiveInput()
       if (input == 'l')
       {
         Serial.print("Room is on the left!");
+        motors.setSpeeds(-TURN_SPEED, TURN_SPEED);
+        delay(TURN_DURATION);
+        motors.setSpeeds(0, 0);
       }
       else
       {
         Serial.print("Room is on the right!");
+        motors.setSpeeds(TURN_SPEED, -TURN_SPEED);
+        delay(TURN_DURATION);
+        motors.setSpeeds(0, 0);
       }
       roomScan = true;
       moveZumo();
     }
   }
+  if (previousInput == 'c')
+  {
+    if (roomScan)
+    {
+      scanRoom();
+    }
+    else
+    {
+      motors.setSpeeds(FORWARD_SPEED, FORWARD_SPEED);
+      Serial.print("Resuming automatic zumo control!");
+    }
+    previousInput = ' ';
+  }
 }
 void moveZumo()
 {
+  char zumoDirection = ' ';
   //check to see if GUI is sending any commands
   //for a specific direction
-  while (input != 'c')
+  while (zumoDirection != 'c')
   {
-    input = (char) Serial.read();
-    if (input == 'w')
+    zumoDirection = (char) Serial.read();
+    if (zumoDirection == 'w')
     {
       motors.setSpeeds(FORWARD_SPEED, FORWARD_SPEED);
       delay(REVERSE_DURATION);
       motors.setSpeeds(0, 0);
     }
-    else if (input == 's')
+    else if (zumoDirection == 's')
     {
       motors.setSpeeds(-REVERSE_SPEED, -REVERSE_SPEED);
       delay(REVERSE_DURATION);
       motors.setSpeeds(0, 0);
     }
-    else if (input == 'r')
+    else if (zumoDirection == 'r')
     {
       motors.setSpeeds(TURN_SPEED, -TURN_SPEED);
       delay(TURN_DURATION);
       motors.setSpeeds(0, 0);
     }
-    else if (input == 'l')
+    else if (zumoDirection == 'l')
     {
       motors.setSpeeds(-TURN_SPEED, TURN_SPEED);
       delay(TURN_DURATION);
       motors.setSpeeds(0, 0);
     }
   }
+  previousInput = 'c';
 }
 
-  //used to detect wall/corner and set behaviour
-  void detectWall()
+//used to detect wall/corner and set behaviour
+void detectWall()
+{
+  sensors.read(sensorValues);   //read the raw values from sensors
+  if (!checkCorner())
   {
-    sensors.read(sensorValues);   //read the raw values from sensors
-    if (checkCorner())
+    if (sensorValues[0] >= calibratedValue[0])
     {
+      motors.setSpeeds(-REVERSE_SPEED, -REVERSE_SPEED);
+      delay(REVERSE_DURATION);
+      motors.setSpeeds(TURN_SPEED, -TURN_SPEED);
+      delay(TURN_DURATION);
+      motors.setSpeeds(FORWARD_SPEED, FORWARD_SPEED);
+    }
+    if (sensorValues[5] >=  calibratedValue[5])
+    {
+      motors.setSpeeds(-REVERSE_SPEED, -REVERSE_SPEED);
+      delay(REVERSE_DURATION);
+      motors.setSpeeds(-TURN_SPEED, TURN_SPEED);
+      delay(TURN_DURATION);
+      motors.setSpeeds(FORWARD_SPEED, FORWARD_SPEED);
+    }
+  }
+}
+bool checkCorner()
+{
+  if (sensorValues[0] >= calibratedValue[0] || sensorValues[5] >= calibratedValue[5])
+  {
+    delay(30);
+    sensors.read(sensorValues);
+    delay(5);
+    if ((sensorValues[1] >= calibratedValue[1]) || (sensorValues[4] >= calibratedValue[4])
+        || (sensorValues[3] >= calibratedValue[3]) || (sensorValues[2] >= calibratedValue[2]))
+    {
+      motors.setSpeeds(0, 0);
+      motors.setSpeeds(-REVERSE_SPEED, -REVERSE_SPEED);
+      delay(REVERSE_DURATION);
+      motors.setSpeeds(0, 0);
+      buzzer.playNote(NOTE_A(5), 200, 15);
       Serial.print("Corner ahead. Manual mode activated!");    //Display a message showing a corner has been found
+      corridorCounter++;
+      String number = "Zumo is at corridor number " +  (String)corridorCounter + "!";
+      Serial.print(number);
       moveZumo();
+      return true;
     }
-    else
-    {
-      if (sensorValues[0] >= calibratedValue[0])
-      {
-        motors.setSpeeds(-REVERSE_SPEED, -REVERSE_SPEED);
-        delay(REVERSE_DURATION);
-        motors.setSpeeds(TURN_SPEED, -TURN_SPEED);
-        delay(TURN_DURATION);
-        motors.setSpeeds(FORWARD_SPEED, FORWARD_SPEED);
-      }
-      if (sensorValues[5] >=  calibratedValue[5])
-      {
-        motors.setSpeeds(-REVERSE_SPEED, -REVERSE_SPEED);
-        delay(REVERSE_DURATION);
-        motors.setSpeeds(-TURN_SPEED, TURN_SPEED);
-        delay(TURN_DURATION);
-        motors.setSpeeds(FORWARD_SPEED, FORWARD_SPEED);
-      }
-    }
+    return false;
   }
-  bool checkCorner()
-  {
-    if (sensorValues[0] >= calibratedValue[0] || sensorValues[5] >= calibratedValue[5])
-    {
-      delay(30);
-      sensors.read(sensorValues);
-      delay(5);
-      if ((sensorValues[1] >= calibratedValue[1]) || (sensorValues[4] >= calibratedValue[4])
-          || (sensorValues[3] >= calibratedValue[3]) || (sensorValues[2] >= calibratedValue[2]))
-      {
-        motors.setSpeeds(0, 0);
-        motors.setSpeeds(-REVERSE_SPEED, -REVERSE_SPEED);
-        delay(REVERSE_DURATION);
-        motors.setSpeeds(0, 0);
-        buzzer.playNote(NOTE_A(5), 200, 15);
-        return true;
-      }
-      return false;
-    }
-  }
-  void scanRoom()
-  {
+}
+void scanRoom()
+{
+  bool objectFound = false;
+  
+  motors.setSpeeds(200,200);
+  delay(500);
     
+  for (int i = 0; i < 4 && objectFound == false; i++)
+  {
+    if (i == 0)
+    {
+      motors.setSpeeds(TURN_SPEED, -TURN_SPEED);
+      delay(700);
+      motors.setSpeeds(0, 0);
+      delay(30);
+      if (sonar.ping_cm() > 0)
+      {
+        delay(5);
+        objectFound = true;
+        roomScan = false;
+        Serial.print("Found object!");
+        break;
+      }
+    }
+    else if (i == 1)
+    {
+      motors.setSpeeds(-TURN_SPEED, TURN_SPEED);
+      delay(700);
+      motors.setSpeeds(0, 0);
+      delay(30);
+      if (sonar.ping_cm() > 0)
+      {
+        delay(5);
+        objectFound = true;
+        roomScan = false;
+        Serial.print("Found object!");
+        break;
+      }
+    }
+    else if (i == 2)
+    {
+      motors.setSpeeds(-TURN_SPEED, TURN_SPEED);
+      delay(700);
+      motors.setSpeeds(0, 0);
+      delay(30);
+      if (sonar.ping_cm() > 0)
+      {
+        delay(5);
+        objectFound = true;
+        roomScan = false;
+        Serial.print("Found object!");
+        break;
+      }
+    }
+    else if (i == 3)
+    {
+      motors.setSpeeds(TURN_SPEED, -TURN_SPEED);
+      delay(700);
+      motors.setSpeeds(0, 0);
+      delay(30);
+      if (sonar.ping_cm() > 0)
+      {
+        delay(5);
+        objectFound = true;
+        roomScan = false;
+        Serial.print("Found object!");
+        break;
+      }
+    }
   }
+  Serial.print("Please drive me outside the room!");
+  moveZumo();
+}
 

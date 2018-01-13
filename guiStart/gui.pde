@@ -36,7 +36,7 @@ public void backClick(GButton source, GEvent event) { //_CODE_:backBtn:984108:
 
 public void stopClick(GButton source, GEvent event) { //_CODE_:stopBtn:713639:
   myPort.write('x');
-  showCommands.setText("Zumo stopped");
+  showCommands.setText("Stop Zumo");
 } //_CODE_:stopBtn:713639:
 
 public void autoAction(GButton source, GEvent event) { //_CODE_:autoBtn:225239:
@@ -50,7 +50,6 @@ public void completeAction(GButton source, GEvent event) { //_CODE_:completeBtn:
 } //_CODE_:completeBtn:927881:
 
 public void showCommandsAction(GTextField source, GEvent event) { //_CODE_:showCommands:358095:
-  println("showCommands - GTextField >> GEvent." + event + " @ " + millis());
 } //_CODE_:showCommands:358095:
 
 public void calibrateAction(GButton source, GEvent event) { //_CODE_:calibrateBtn:772610:
@@ -63,11 +62,15 @@ public void roomAction(GButton source, GEvent event) { //_CODE_:roomBtn:308807:
  showCommands.setText("Room found");
 } //_CODE_:roomBtn:308807:
 
-public void showTextAction(GTextArea source, GEvent event) { //_CODE_:showText:467912:
-   while (myPort.available() > 0) {
-    showText.setText(myPort.readStringUntil('!'));
- }
-} //_CODE_:showText:467912:
+public void showTextAction(GTextArea source, GEvent event) { //_CODE_:showText:987080:
+  while (myPort.available() > 0) 
+   {
+     val = myPort.readStringUntil('!');
+     if (val != null) {
+     showText.appendText(val);
+     }
+   }
+} //_CODE_:showText:987080:
 
 
 
@@ -78,58 +81,58 @@ public void createGUI(){
   G4P.setGlobalColorScheme(GCScheme.BLUE_SCHEME);
   G4P.setCursor(ARROW);
   surface.setTitle("Sketch Window");
-  leftBtn = new GButton(this, 120, 60, 80, 30);
+  leftBtn = new GButton(this, 120, 70, 80, 30);
   leftBtn.setText("Left");
   leftBtn.setTextBold();
   leftBtn.addEventHandler(this, "leftClick");
-  rightBtn = new GButton(this, 300, 60, 80, 31);
+  rightBtn = new GButton(this, 320, 70, 80, 31);
   rightBtn.setText("Right");
   rightBtn.setTextBold();
   rightBtn.addEventHandler(this, "rightClick");
-  forwardBtn = new GButton(this, 210, 20, 80, 30);
+  forwardBtn = new GButton(this, 220, 30, 80, 30);
   forwardBtn.setText("Forward");
   forwardBtn.setTextBold();
   forwardBtn.addEventHandler(this, "forwardClick");
-  backBtn = new GButton(this, 210, 100, 80, 30);
+  backBtn = new GButton(this, 220, 110, 80, 30);
   backBtn.setText("Back");
   backBtn.setTextBold();
   backBtn.addEventHandler(this, "backClick");
-  stopBtn = new GButton(this, 210, 60, 80, 30);
+  stopBtn = new GButton(this, 220, 70, 80, 30);
   stopBtn.setText("Stop");
   stopBtn.setTextBold();
   stopBtn.addEventHandler(this, "stopClick");
-  label1 = new GLabel(this, 20, 130, 150, 20);
+  label1 = new GLabel(this, 20, 180, 150, 20);
   label1.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
   label1.setText("Messages from Zumo:");
   label1.setTextBold();
   label1.setLocalColorScheme(GCScheme.YELLOW_SCHEME);
   label1.setOpaque(false);
-  autoBtn = new GButton(this, 390, 160, 80, 30);
+  autoBtn = new GButton(this, 390, 220, 80, 30);
   autoBtn.setText("Auto Move");
   autoBtn.setTextBold();
   autoBtn.addEventHandler(this, "autoAction");
-  completeBtn = new GButton(this, 390, 210, 80, 30);
+  completeBtn = new GButton(this, 390, 170, 80, 30);
   completeBtn.setText("Complete");
   completeBtn.setTextBold();
   completeBtn.addEventHandler(this, "completeAction");
-  label2 = new GLabel(this, 20, 190, 160, 20);
+  label2 = new GLabel(this, 20, 130, 160, 20);
   label2.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
   label2.setText("Commands sent to Zumo:");
   label2.setTextBold();
   label2.setLocalColorScheme(GCScheme.YELLOW_SCHEME);
   label2.setOpaque(false);
-  showCommands = new GTextField(this, 20, 210, 250, 30, G4P.SCROLLBARS_NONE);
+  showCommands = new GTextField(this, 20, 150, 250, 30, G4P.SCROLLBARS_NONE);
   showCommands.setOpaque(true);
   showCommands.addEventHandler(this, "showCommandsAction");
-  calibrateBtn = new GButton(this, 300, 210, 80, 30);
+  calibrateBtn = new GButton(this, 290, 170, 80, 30);
   calibrateBtn.setText("Calibrate");
   calibrateBtn.setTextBold();
   calibrateBtn.addEventHandler(this, "calibrateAction");
-  roomBtn = new GButton(this, 300, 160, 80, 30);
+  roomBtn = new GButton(this, 290, 220, 80, 30);
   roomBtn.setText("Room");
   roomBtn.setTextBold();
   roomBtn.addEventHandler(this, "roomAction");
-  showText = new GTextArea(this, 20, 150, 250, 30, G4P.SCROLLBARS_NONE);
+  showText = new GTextArea(this, 20, 200, 250, 80, G4P.SCROLLBARS_VERTICAL_ONLY | G4P.SCROLLBARS_AUTOHIDE);
   showText.setOpaque(true);
   showText.addEventHandler(this, "showTextAction");
 }

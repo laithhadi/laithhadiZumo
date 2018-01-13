@@ -6,7 +6,7 @@ Serial myPort;
 String val;
 
 public void setup() {
-  size(500, 270);
+  size(500, 320);
   String portName = "COM4";
   myPort = new Serial(this,portName,9600);
   createGUI();
@@ -16,6 +16,13 @@ public void draw() {
   background(15);
   fill(227, 230, 255);
   modify();
+  while (myPort.available() > 0) 
+   {
+     val = myPort.readStringUntil('!');
+     if (val != null) {
+     showText.appendText(val);
+     }
+   }
 }
 
 public void modify()
