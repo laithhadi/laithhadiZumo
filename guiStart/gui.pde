@@ -59,7 +59,7 @@ public void calibrateAction(GButton source, GEvent event) { //_CODE_:calibrateBt
 } //_CODE_:calibrateBtn:772610:
 
 public void roomAction(GButton source, GEvent event) { //_CODE_:roomBtn:308807:
- myPort.write('r');
+ myPort.write('z');
  showCommands.setText("Room found");
 } //_CODE_:roomBtn:308807:
 
@@ -98,7 +98,7 @@ public void createGUI(){
   stopBtn.setText("Stop");
   stopBtn.setTextBold();
   stopBtn.addEventHandler(this, "stopClick");
-  label1 = new GLabel(this, 20, 110, 150, 20);
+  label1 = new GLabel(this, 20, 130, 150, 20);
   label1.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
   label1.setText("Messages from Zumo:");
   label1.setTextBold();
@@ -112,13 +112,13 @@ public void createGUI(){
   completeBtn.setText("Complete");
   completeBtn.setTextBold();
   completeBtn.addEventHandler(this, "completeAction");
-  label2 = new GLabel(this, 20, 200, 153, 20);
+  label2 = new GLabel(this, 20, 190, 160, 20);
   label2.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
   label2.setText("Commands sent to Zumo:");
   label2.setTextBold();
   label2.setLocalColorScheme(GCScheme.YELLOW_SCHEME);
   label2.setOpaque(false);
-  showCommands = new GTextField(this, 20, 220, 269, 40, G4P.SCROLLBARS_NONE);
+  showCommands = new GTextField(this, 20, 210, 250, 30, G4P.SCROLLBARS_NONE);
   showCommands.setOpaque(true);
   showCommands.addEventHandler(this, "showCommandsAction");
   calibrateBtn = new GButton(this, 300, 210, 80, 30);
@@ -129,7 +129,7 @@ public void createGUI(){
   roomBtn.setText("Room");
   roomBtn.setTextBold();
   roomBtn.addEventHandler(this, "roomAction");
-  showText = new GTextArea(this, 20, 130, 250, 90, G4P.SCROLLBARS_NONE);
+  showText = new GTextArea(this, 20, 150, 250, 30, G4P.SCROLLBARS_NONE);
   showText.setOpaque(true);
   showText.addEventHandler(this, "showTextAction");
 }
