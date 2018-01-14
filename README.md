@@ -20,7 +20,3 @@ My first priority was to ensure that the reflectance sensor array used accurate 
 4. ZumoReflectanceSensorArray https://github.com/pololu/zumo-shield 
 5. Pushbutton https://github.com/pololu/zumo-shield 
 6. NewPing https://bitbucket.org/teckel12/arduino-new-ping/wiki/Home
-
-# Extra documentation
-
-Please find the report in this repository to explore this project.
