@@ -6,7 +6,7 @@ The scenario motivating this idea is that the zumo robot is trying to find/rescu
 
 Processing: it was the IDE that I used to create the GUI. It involved the use of serial port through an XBee connection which is responsible for sending commands to Zumo. I used the library G4P (http://www.lagers.org.uk/g4p/) in Processing as it provided me with a suitable GUI builder tool.
 
-Arduino: the robot side was programmed in Arduino IDE, and it was responsible for processing all the commands sent by the GUI. For the most part, it received an action, and processed that action. It involved the use of sensors such as reflectance sensor array and the ultrasonic sensor. The Arduino board is connected to a Zumo robot and the XBee shield with extensions to provide more space for attaching the ultrasonic sensor at the front.
+Arduino: the robot side was programmed in Arduino IDE, and it was responsible for processing all the commands sent by the GUI. For the most part, it received an action, and processed that action. It involved the use of sensors such as reflectance sensor array and the ultrasonic sensor. The Arduino board is connected to a Zumo robot and the XBee shield with extensions to provide more space for attaching the ultrasonic sensor at the front. The Zumo will perform calibration and inform the user when they are complete, the user may then place the Zumo at the start of the track. This project allows the user to remotely control the Zumo using the 'W', 'A', 'S', and 'D' keys to move it forward, rotate left, move backward and rotate right. Additional functionality is also provided such as the change of speed through slider in GUI.
 
 # Programming approach
 
