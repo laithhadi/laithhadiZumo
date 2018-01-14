@@ -63,14 +63,10 @@ public void roomAction(GButton source, GEvent event) { //_CODE_:roomBtn:308807:
 } //_CODE_:roomBtn:308807:
 
 public void showTextAction(GTextArea source, GEvent event) { //_CODE_:showText:987080:
-  while (myPort.available() > 0) 
-   {
-     val = myPort.readStringUntil('!');
-     if (val != null) {
-     showText.appendText(val);
-     }
-   }
 } //_CODE_:showText:987080:
+
+public void showRoomAction(GTextField source, GEvent event) { //_CODE_:showRoom:967927:
+} //_CODE_:showRoom:967927:
 
 
 
@@ -81,60 +77,66 @@ public void createGUI(){
   G4P.setGlobalColorScheme(GCScheme.BLUE_SCHEME);
   G4P.setCursor(ARROW);
   surface.setTitle("Sketch Window");
-  leftBtn = new GButton(this, 120, 70, 80, 30);
+  leftBtn = new GButton(this, 210, 70, 80, 30);
   leftBtn.setText("Left");
   leftBtn.setTextBold();
   leftBtn.addEventHandler(this, "leftClick");
-  rightBtn = new GButton(this, 320, 70, 80, 31);
+  rightBtn = new GButton(this, 390, 70, 80, 31);
   rightBtn.setText("Right");
   rightBtn.setTextBold();
   rightBtn.addEventHandler(this, "rightClick");
-  forwardBtn = new GButton(this, 220, 30, 80, 30);
+  forwardBtn = new GButton(this, 300, 30, 80, 30);
   forwardBtn.setText("Forward");
   forwardBtn.setTextBold();
   forwardBtn.addEventHandler(this, "forwardClick");
-  backBtn = new GButton(this, 220, 110, 80, 30);
+  backBtn = new GButton(this, 300, 110, 80, 30);
   backBtn.setText("Back");
   backBtn.setTextBold();
   backBtn.addEventHandler(this, "backClick");
-  stopBtn = new GButton(this, 220, 70, 80, 30);
+  stopBtn = new GButton(this, 300, 70, 80, 30);
   stopBtn.setText("Stop");
   stopBtn.setTextBold();
   stopBtn.addEventHandler(this, "stopClick");
-  label1 = new GLabel(this, 20, 180, 150, 20);
-  label1.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
+  label1 = new GLabel(this, 20, 150, 140, 20);
   label1.setText("Messages from Zumo:");
   label1.setTextBold();
   label1.setLocalColorScheme(GCScheme.YELLOW_SCHEME);
   label1.setOpaque(false);
-  autoBtn = new GButton(this, 390, 220, 80, 30);
+  autoBtn = new GButton(this, 110, 50, 80, 30);
   autoBtn.setText("Auto Move");
   autoBtn.setTextBold();
   autoBtn.addEventHandler(this, "autoAction");
-  completeBtn = new GButton(this, 390, 170, 80, 30);
+  completeBtn = new GButton(this, 110, 10, 80, 30);
   completeBtn.setText("Complete");
   completeBtn.setTextBold();
   completeBtn.addEventHandler(this, "completeAction");
-  label2 = new GLabel(this, 20, 130, 160, 20);
-  label2.setTextAlign(GAlign.CENTER, GAlign.MIDDLE);
+  label2 = new GLabel(this, 20, 100, 160, 20);
   label2.setText("Commands sent to Zumo:");
   label2.setTextBold();
   label2.setLocalColorScheme(GCScheme.YELLOW_SCHEME);
   label2.setOpaque(false);
-  showCommands = new GTextField(this, 20, 150, 250, 30, G4P.SCROLLBARS_NONE);
+  showCommands = new GTextField(this, 20, 120, 250, 30, G4P.SCROLLBARS_NONE);
   showCommands.setOpaque(true);
   showCommands.addEventHandler(this, "showCommandsAction");
-  calibrateBtn = new GButton(this, 290, 170, 80, 30);
+  calibrateBtn = new GButton(this, 20, 10, 80, 30);
   calibrateBtn.setText("Calibrate");
   calibrateBtn.setTextBold();
   calibrateBtn.addEventHandler(this, "calibrateAction");
-  roomBtn = new GButton(this, 290, 220, 80, 30);
+  roomBtn = new GButton(this, 20, 50, 80, 30);
   roomBtn.setText("Room");
   roomBtn.setTextBold();
   roomBtn.addEventHandler(this, "roomAction");
-  showText = new GTextArea(this, 20, 200, 250, 80, G4P.SCROLLBARS_VERTICAL_ONLY | G4P.SCROLLBARS_AUTOHIDE);
+  showText = new GTextArea(this, 20, 170, 250, 80, G4P.SCROLLBARS_VERTICAL_ONLY | G4P.SCROLLBARS_AUTOHIDE);
   showText.setOpaque(true);
   showText.addEventHandler(this, "showTextAction");
+  showRoom = new GTextField(this, 20, 270, 260, 30, G4P.SCROLLBARS_NONE);
+  showRoom.setOpaque(true);
+  showRoom.addEventHandler(this, "showRoomAction");
+  label3 = new GLabel(this, 20, 250, 90, 20);
+  label3.setText("Room details:");
+  label3.setTextBold();
+  label3.setLocalColorScheme(GCScheme.YELLOW_SCHEME);
+  label3.setOpaque(false);
 }
 
 // Variable declarations 
@@ -152,3 +154,5 @@ GTextField showCommands;
 GButton calibrateBtn; 
 GButton roomBtn; 
 GTextArea showText; 
+GTextField showRoom; 
+GLabel label3; 

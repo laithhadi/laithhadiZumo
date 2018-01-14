@@ -24,11 +24,14 @@ ZumoReflectanceSensorArray sensors;
 ZumoBuzzer buzzer;
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 int calibratedValue[6];
-int rooms[10];
-int corridorCounter = 1;
+String rooms[10];
+String message;
+int roomCounter = 0;
+int corridorCounter = 0;
 unsigned int sensorValues[NUM_SENSORS]; //declare number of sensors on the zumo
 bool start = false;
 bool roomScan = false;
+bool objectFound;
 char input, previousInput;
 /*------------------------------------------------------------------------
   Setup function
@@ -122,19 +125,25 @@ void receiveInput()
       }
       if (input == 'l')
       {
-        Serial.print("Room is on the left!");
+        rooms[roomCounter] = "left";
         motors.setSpeeds(-TURN_SPEED, TURN_SPEED);
         delay(TURN_DURATION);
         motors.setSpeeds(0, 0);
       }
       else
       {
-        Serial.print("Room is on the right!");
+        rooms[roomCounter] = "right";
         motors.setSpeeds(TURN_SPEED, -TURN_SPEED);
         delay(TURN_DURATION);
         motors.setSpeeds(0, 0);
       }
+      message = "Room: ";
+      Serial.print(message + (roomCounter + 1));
+      message = " on the " + rooms[roomCounter] + " side of corridor ";
+      Serial.print(message +(corridorCounter + 1));
+      Serial.print("!");
       roomScan = true;
+      roomCounter++;
       moveZumo();
     }
   }
@@ -144,11 +153,8 @@ void receiveInput()
     {
       scanRoom();
     }
-    else
-    {
-      motors.setSpeeds(FORWARD_SPEED, FORWARD_SPEED);
-      Serial.print("Resuming automatic zumo control!");
-    }
+    motors.setSpeeds(FORWARD_SPEED, FORWARD_SPEED);
+    Serial.print("Automatic zumo control!");
     previousInput = ' ';
   }
 }
@@ -229,8 +235,9 @@ bool checkCorner()
       buzzer.playNote(NOTE_A(5), 200, 15);
       Serial.print("Corner ahead. Manual mode activated!");    //Display a message showing a corner has been found
       corridorCounter++;
-      String number = "Zumo is at corridor number " +  (String)corridorCounter + "!";
-      Serial.print(number);
+      message = "Zumo is at corridor number ";
+      Serial.print(message + (corridorCounter + 1));
+      Serial.print("!");
       moveZumo();
       return true;
     }
@@ -239,11 +246,10 @@ bool checkCorner()
 }
 void scanRoom()
 {
-  bool objectFound = false;
-  
-  motors.setSpeeds(200,200);
+  objectFound = false;
+  motors.setSpeeds(200, 200);
   delay(500);
-    
+
   for (int i = 0; i < 4 && objectFound == false; i++)
   {
     if (i == 0)
@@ -254,10 +260,7 @@ void scanRoom()
       delay(30);
       if (sonar.ping_cm() > 0)
       {
-        delay(5);
-        objectFound = true;
-        roomScan = false;
-        Serial.print("Found object!");
+        personFoundMessage();
         break;
       }
     }
@@ -269,10 +272,7 @@ void scanRoom()
       delay(30);
       if (sonar.ping_cm() > 0)
       {
-        delay(5);
-        objectFound = true;
-        roomScan = false;
-        Serial.print("Found object!");
+        personFoundMessage();
         break;
       }
     }
@@ -284,10 +284,7 @@ void scanRoom()
       delay(30);
       if (sonar.ping_cm() > 0)
       {
-        delay(5);
-        objectFound = true;
-        roomScan = false;
-        Serial.print("Found object!");
+        personFoundMessage();
         break;
       }
     }
@@ -299,15 +296,26 @@ void scanRoom()
       delay(30);
       if (sonar.ping_cm() > 0)
       {
-        delay(5);
-        objectFound = true;
-        roomScan = false;
-        Serial.print("Found object!");
+        personFoundMessage();
         break;
       }
     }
   }
+  if (objectFound == false)
+  {
+    Serial.print("No object detected!");
+  }
   Serial.print("Please drive me outside the room!");
   moveZumo();
+}
+
+void personFoundMessage()
+{
+  delay(5);
+  objectFound = true;
+  roomScan = false;
+  message = "Found a person at room ";
+  Serial.print(message + roomCounter);
+  Serial.print("!");
 }
 

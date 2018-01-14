@@ -20,7 +20,14 @@ public void draw() {
    {
      val = myPort.readStringUntil('!');
      if (val != null) {
-     showText.appendText(val);
+       if(val.startsWith("R"))
+       {
+         showRoom.setText(val);
+       }
+       else
+       {
+         showText.appendText(val);
+       }
      }
    }
 }
@@ -29,4 +36,5 @@ public void modify()
 {
    showCommands.setTextBold();
    showText.setTextBold();
+   showRoom.setTextBold();
 }
