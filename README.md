@@ -14,12 +14,12 @@ My first priority was to ensure that the reflectance sensor array used accurate 
 
 # Libaries used
 
-ZumoMotors https://github.com/pololu/zumo-shield 
-ZumoBuzzer https://github.com/pololu/zumo-shield 
-QTRSensors https://github.com/pololu/zumo-shield 
-ZumoReflectanceSensorArray https://github.com/pololu/zumo-shield 
-Pushbutton https://github.com/pololu/zumo-shield 
-NewPing https://bitbucket.org/teckel12/arduino-new-ping/wiki/Home
+1. ZumoMotors https://github.com/pololu/zumo-shield 
+2. ZumoBuzzer https://github.com/pololu/zumo-shield 
+3. QTRSensors https://github.com/pololu/zumo-shield 
+4. ZumoReflectanceSensorArray https://github.com/pololu/zumo-shield 
+5. Pushbutton https://github.com/pololu/zumo-shield 
+6. NewPing https://bitbucket.org/teckel12/arduino-new-ping/wiki/Home
 
 # Extra documentation
 
