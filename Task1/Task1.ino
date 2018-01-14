@@ -13,7 +13,6 @@
 #define NUM_SENSORS 6
 #define REVERSE_SPEED     150
 #define TURN_SPEED        150
-#define FORWARD_SPEED     130
 #define REVERSE_DURATION  150 // ms
 #define TURN_DURATION     150 // ms
 #define MAX_DISTANCE      30  // Maximum distance we want to ping for (in centimeters)
@@ -26,6 +25,7 @@ NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 int calibratedValue[6];
 String rooms[10];
 String message;
+int FORWARD_SPEED = 130;
 int roomCounter = 0;
 int corridorCounter = 0;
 unsigned int sensorValues[NUM_SENSORS]; //declare number of sensors on the zumo
@@ -104,11 +104,18 @@ void receiveInput()
 {
   while (Serial.available() > 0 && previousInput != 'c')
   {
-    start = true;
+    start = true;    
     input = (char) Serial.read();
+    
     if (input == 'x')
     {
       motors.setSpeeds(0, 0);
+    }
+    else if (input == 'j')
+    {
+      int motorSpeed = Serial.parseInt();
+      FORWARD_SPEED = motorSpeed; 
+      Serial.print(motorSpeed);     
     }
     else if (input == 'p')
     {
