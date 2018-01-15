@@ -5,7 +5,6 @@
 #include <ZumoBuzzer.h>
 #include <QTRSensors.h>
 #include <ZumoReflectanceSensorArray.h>
-#include <Pushbutton.h>
 #include <NewPing.h>
 /*------------------------------------------------------------------------
   global variable declarations
@@ -44,8 +43,6 @@ bool isAtEnd = false;                   // checks whether the robot is at the en
   -------------------------------------------------------------------------*/
 void setup()
 {
-  Pushbutton button(ZUMO_BUTTON);
-
   Serial.begin(9600);                 // begin serial communication at 9600 bits
   buzzer.play(">g32>>c32");           // Play a little welcome song
   sensors.init();                     // Initialize the reflectance sensors module
