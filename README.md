@@ -14,11 +14,13 @@ My first priority was to ensure that the reflectance sensor array used accurate 
 
 As for object detection, I utilised the use of ultrasonic sensor by moving the robot to the right, left and the initial direction at entry to scan for people; in other words, it scans 180 degrees. One of the main problems that I encountered while scanning for an object was the use of delays when calling the ping_cm() function. This is when I realised that the robot had to be turned, stopped and then use the ping_cm() for every single movement. Originally my code was using 4-way rotational approach: turn right, left, left, right and use ping_cm() every time a rotation is completed. However, because of the size of each rotation, it limited my ultrasonic detection. At this point, I solved this by using 72 smaller rotations within 40 ms delay in between which in turn provided the ping_cm() with the ability to scan at every single rotation.
 
+Another problem I encountered while testing was how messages being sent through the serial xBee connection are lost. Initially, each message that was sent from Arduino was sent instantly. While reading the "XBee Sheild Hookup Guide"(https://learn.sparkfun.com/tutorials/xbee-shield-hookup-guide) I found out that sending bytes continuously without any delay caused this in addition to lag. The solution to this was adding 10 ms delay everytime Serial.print was called.
+
 # Libaries used
 
-1. ZumoMotors https://github.com/pololu/zumo-shield 
-2. ZumoBuzzer https://github.com/pololu/zumo-shield 
-3. QTRSensors https://github.com/pololu/zumo-shield 
-4. ZumoReflectanceSensorArray https://github.com/pololu/zumo-shield 
-5. Pushbutton https://github.com/pololu/zumo-shield 
-6. NewPing https://bitbucket.org/teckel12/arduino-new-ping/wiki/Home
+1. ZumoMotors https://github.com/pololu/zumo-shield - used to gain control over motors and how to manipulate them (e.g. changing speed).
+2. ZumoBuzzer https://github.com/pololu/zumo-shield - used to produce different tunes each time a specific event happens (e.g. finding object.
+3. QTRSensors https://github.com/pololu/zumo-shield - used for detecting the borders (mainly black line).
+4. ZumoReflectanceSensorArray https://github.com/pololu/zumo-shield - also used for detecting borders and adapting it by using calibration.
+6. NewPing https://bitbucket.org/teckel12/arduino-new-ping/wiki/Home - used for ultrasonic detection
+7. G4P http://www.lagers.org.uk/g4p/ - this was very helpful as I was able to build GUI using the tools this library provided.
